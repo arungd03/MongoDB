@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-express-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,6 +55,13 @@ spec:
             configMapKeyRef:
               name: mongoconfigmap
               key: database_url
+        volumeMounts:
+        - name: mongo-express-storage
+          mountPath: /data/config
+      volumes:
+      - name: mongo-express-storage
+        persistentVolumeClaim:
+          claimName: mongo-express-pvc
 ---
 apiVersion: v1
 kind: Service
